@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Checkout GitHub Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/Dudi-Chiranjeevi/sptestus4.git'
+                git branch: 'main', url: 'https://github.com/SrikarVanaparthy/source-des.git'
             }
         }
 
