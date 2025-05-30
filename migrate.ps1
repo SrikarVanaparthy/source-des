@@ -7,7 +7,6 @@ param (
     [Parameter(Mandatory = $true)][string]$TargetPath
 )
 
-
 function Run-Command {
     param (
         [string]$Command,
@@ -16,24 +15,23 @@ function Run-Command {
 
     Write-Host "`n$Description" -ForegroundColor Cyan
     try {
-        # Use cmd to make sure Unix-style syntax is preserved in Windows
-        $output = & cmd.exe /c $Command 2>&1
+        $output = Invoke-Expression $Command
         Write-Output $output
     }
     catch {
         Write-Host "❌ Error executing: $Command" -ForegroundColor Red
         Write-Error $_.Exception.Message
+        exit 1
     }
 }
 
-# Step 1: List currently logged-in users on the source host
+# Step 1: List users on source host
 $logUsersCommand = "ssh -o StrictHostKeyChecking=no $SourceUser@$SourceHost who"
 Run-Command -Command $logUsersCommand -Description "📋 Logging into source VM to list current users..."
 
-# Step 2: Compose the SCP command to copy the CSV file from the source VM to the destination VM
+# Step 2: SCP command
 $scpCommand = "scp -o StrictHostKeyChecking=no $CsvFilePath ${DestinationUser}@${DestinationHost}:$TargetPath"
 
-# Step 3: Wrap the SCP command inside SSH so that it's run remotely on the source VM
-$sshSCPCommand = "ssh -o StrictHostKeyChecking=no ${SourceUser}@${SourceHost} `"${scpCommand}`""
-
+# Step 3: Run SCP remotely via SSH
+$sshSCPCommand = "ssh -o StrictHostKeyChecking=no ${SourceUser}@${SourceHost} '$scpCommand'"
 Run-Command -Command $sshSCPCommand -Description "🚚 Executing remote SCP via SSH from source to destination..."
