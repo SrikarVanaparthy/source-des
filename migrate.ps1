@@ -1,11 +1,12 @@
 param (
-    [string]$SourceUser,
-    [string]$SourceHost,
-    [string]$DestinationUser,
-    [string]$DestinationHost,
-    [string]$CsvFilePath,
-    [string]$TargetPath
+    [Parameter(Mandatory = $true)][string]$SourceUser,
+    [Parameter(Mandatory = $true)][string]$SourceHost,
+    [Parameter(Mandatory = $true)][string]$DestinationUser,
+    [Parameter(Mandatory = $true)][string]$DestinationHost,
+    [Parameter(Mandatory = $true)][string]$CsvFilePath,
+    [Parameter(Mandatory = $true)][string]$TargetPath
 )
+
 
 function Run-Command {
     param (
